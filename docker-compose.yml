@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    container_name: testsight_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./sample_repos:/workspace/sample_repos:ro
+      - ./data:/data
+    environment:
+      - TESTSIGHT_DB=/data/test_sight.db
+  streamlit:
+    build: ./frontend
+    container_name: testsight_streamlit
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
