@@ -1,0 +1,36 @@
+# generate_tests.spec.yaml
+name: generate_tests
+version: 1.0
+description: |
+  Spec for generating pytest unit tests for Python modules.
+  This spec documents expected inputs, outputs, and agent instructions
+  that Kiro (or a similar agent) should follow when producing tests.
+
+inputs:
+  repo_path: ./workspace/repo
+  modules:  # optional list of modules to prioritize
+    - module_math.py
+    - service_client.py
+
+outputs:
+  - generated_tests_path: ./workspace/repo/tests/test_generated.py
+
+agent:
+  model: gpt-4o
+  temperature: 0.0
+  max_tokens: 2048
+  instructions: |
+    You are an expert Python developer who must write pytest unit tests for the repository found at `repo_path`.
+    Follow these rules:
+    1. For each pure function, create tests covering basic, edge, and error cases.
+    2. For functions that call external services (HTTP, DB), write tests that use mocking (monkeypatch or unittest.mock).
+    3. Keep tests deterministic and fast — avoid real network calls.
+    4. Use pytest fixtures and parametrization when applicable.
+    5. Place generated tests in `outputs[0].generated_tests_path`.
+
+examples: |
+  Example: For a module `module_math.py` with functions add, subtract, divide
+  - create test_add, test_subtract, test_divide, and include a test asserting divide raises ValueError on zero division.
+
+notes: |
+  This file should be committed to the repository in `/.kiro/` to show judges how Kiro was instructed to generate tests.
